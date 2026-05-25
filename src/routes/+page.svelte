@@ -1,8 +1,12 @@
 <script lang="ts">
 	import { Folder, FileText, Image, Music } from '@lucide/svelte';
 	import Window from '$lib/components/Window.svelte';
+	import MusicPlayer from '$lib/components/MusicPlayer.svelte';
+	import SystemInfo from '$lib/components/SystemInfo.svelte';
+	import { windowsState } from '$lib/stores/windows.svelte';
 
 	let windowOpen = $state(true);
+	let musicOpen = $state(false);
 
 	type IconType = typeof Folder;
 	type Item = { id: number; label: string; icon: IconType; x: number; y: number };
@@ -78,6 +82,18 @@
 		</Window>
 	{/if}
 
+	{#if musicOpen}
+		<Window title="Music" x={120} y={60} width={320} height={420} onclose={() => (musicOpen = false)}>
+			<MusicPlayer />
+		</Window>
+	{/if}
+
+	{#if windowsState.systemOpen}
+		<Window title="System" x={200} y={80} width={420} height={480} onclose={() => (windowsState.systemOpen = false)}>
+			<SystemInfo />
+		</Window>
+	{/if}
+
 	{#each items as item (item.id)}
 		{@const Icon = item.icon}
 		{@const config = iconConfigMap.get(item.icon) ?? fallbackConfig}
@@ -98,6 +114,7 @@
 					: 'none'};
 				z-index: {isDragging ? 10 : 1};"
 			onpointerdown={(e) => onpointerdown(e, item)}
+			ondblclick={() => { if (item.id === 5) musicOpen = true; }}
 		>
 			<!-- App tile -->
 			<div

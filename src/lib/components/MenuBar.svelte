@@ -1,6 +1,15 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { Wifi, Battery } from '@lucide/svelte';
+	import { Power, RotateCcw } from '@lucide/svelte';
+	import {
+		DropdownMenu,
+		DropdownMenuContent,
+		DropdownMenuItem,
+		DropdownMenuSeparator,
+		DropdownMenuTrigger
+	} from '$lib/components/ui/dropdown-menu';
+	import { Info } from '@lucide/svelte';
+	import { windowsState } from '$lib/stores/windows.svelte';
 
 	let timeString = $state('');
 	let dateString = $state('');
@@ -26,6 +35,14 @@
 	});
 
 	const menuItems = ['Finder', 'File', 'View', 'Go'];
+
+	function handleShutdown() {
+		window.close();
+	}
+
+	function handleRestart() {
+		location.reload();
+	}
 </script>
 
 <div
@@ -34,7 +51,33 @@
 >
 	<!-- Left side -->
 	<div class="flex items-center gap-4">
-		<span class="text-sm font-extrabold tracking-tight text-white/95 select-none">PZ</span>
+		<DropdownMenu>
+			<DropdownMenuTrigger
+				class="cursor-default text-sm font-extrabold tracking-tight text-white/95 select-none rounded px-1 hover:bg-white/10 transition-colors"
+			>
+				PZ
+			</DropdownMenuTrigger>
+			<DropdownMenuContent
+				class="min-w-45 border border-white/10 bg-black/75 backdrop-blur-xl text-white/85"
+				align="start"
+				sideOffset={4}
+			>
+				<DropdownMenuItem class="text-xs" onclick={() => (windowsState.systemOpen = true)}>
+					<Info class="h-3.5 w-3.5" />
+					System
+				</DropdownMenuItem>
+				<DropdownMenuSeparator class="bg-white/10" />
+				<DropdownMenuItem class="text-xs" onclick={handleRestart}>
+					<RotateCcw class="h-3.5 w-3.5" />
+					Restart
+				</DropdownMenuItem>
+				<DropdownMenuSeparator class="bg-white/10" />
+				<DropdownMenuItem class="text-xs text-red-400 focus:bg-red-500/15 focus:text-red-400" onclick={handleShutdown}>
+					<Power class="h-3.5 w-3.5" />
+					Turn Off
+				</DropdownMenuItem>
+			</DropdownMenuContent>
+		</DropdownMenu>
 		<div class="h-3.5 w-px bg-white/20"></div>
 		{#each menuItems as item}
 			<span

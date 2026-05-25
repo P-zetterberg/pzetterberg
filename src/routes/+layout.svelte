@@ -4,15 +4,19 @@
 	import wallpaper from '$lib/assets/wallpaper.jpg';
 	import MenuBar from '$lib/components/MenuBar.svelte';
 	import NavMenu from '$lib/components/NavMenu.svelte';
+	import BootScreen from '$lib/components/BootScreen.svelte';
+	import { bootState } from '$lib/stores/boot.svelte';
 
 	let { children } = $props();
 </script>
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
 
+<BootScreen />
+
 <div
 	class="flex h-screen flex-col overflow-hidden bg-cover bg-center bg-no-repeat"
-	style="background-image: url({wallpaper})"
+	style="background-image: url({wallpaper}); opacity: {bootState.complete ? 1 : 0}; transition: opacity 0.3s ease;"
 >
 	<MenuBar />
 
