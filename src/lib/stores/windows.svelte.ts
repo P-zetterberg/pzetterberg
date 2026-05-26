@@ -4,5 +4,6 @@ export const windowsState = $state({
 	projectsOpen: false,
 	notesOpen: false,
 	mailOpen: false,
-	terminalOpen: false
+	terminalOpen: false,
+	resumeOpen: false
 });

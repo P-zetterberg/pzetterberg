@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Component } from 'svelte';
-	import { Folder, FileText, Image, Music, Monitor, Mail, TerminalSquare } from '@lucide/svelte';
+	import { Folder, FileText, Image, Music, Monitor, Mail, TerminalSquare, FileUser } from '@lucide/svelte';
 	import Window from '$lib/components/Window.svelte';
 	import MusicPlayer from '$lib/components/MusicPlayer.svelte';
 	import SystemInfo from '$lib/components/SystemInfo.svelte';
@@ -8,6 +8,7 @@
 	import Notes from '$lib/components/Notes.svelte';
 	import MailApp from '$lib/components/Mail.svelte';
 	import Terminal from '$lib/components/Terminal.svelte';
+	import Resume from '$lib/components/Resume.svelte';
 	import MatrixRain from '$lib/components/MatrixRain.svelte';
 	import { windowsState } from '$lib/stores/windows.svelte';
 	import { easterEggState } from '$lib/stores/easterEggs.svelte';
@@ -30,7 +31,8 @@
 		{ key: 'projectsOpen', title: 'Projects', x: 160, y: 60,  width: 560, height: 520, component: ProjectsBrowser },
 		{ key: 'notesOpen',    title: 'Notes.txt', x: 240, y: 100, width: 360, height: 320, component: Notes },
 		{ key: 'mailOpen',     title: 'Mail',      x: 180, y: 90,  width: 420, height: 460, component: MailApp },
-		{ key: 'terminalOpen', title: 'Terminal',  x: 300, y: 120, width: 520, height: 380, component: Terminal }
+		{ key: 'terminalOpen', title: 'Terminal',  x: 300, y: 120, width: 520, height: 380, component: Terminal },
+		{ key: 'resumeOpen',   title: 'Resume.pdf', x: 200, y: 70,  width: 480, height: 600, component: Resume }
 	];
 
 	const KONAMI = [
@@ -94,6 +96,8 @@
 		].map((item, i) => ({ ...item, id: i + 1, x: 40, y: ICON_START_Y + i * ICON_SPACING_Y }))
 	);
 
+	items.push({ id: 9, label: 'Resume.pdf', icon: FileUser, x: 160, y: 40 });
+
 	let dragging: { id: number; offsetX: number; offsetY: number } | null = $state(null);
 	let selected: number | null = $state(null);
 	let container: HTMLDivElement;
@@ -105,7 +109,8 @@
 		[Music,          { gradient: 'linear-gradient(135deg, #EC4899, #BE185D)', filled: false }],
 		[Monitor,        { gradient: 'linear-gradient(135deg, #10B981, #059669)', filled: false }],
 		[Mail,           { gradient: 'linear-gradient(135deg, #6366F1, #4F46E5)', filled: false }],
-		[TerminalSquare, { gradient: 'linear-gradient(135deg, #1a1a2e, #16213e)', filled: false }]
+		[TerminalSquare, { gradient: 'linear-gradient(135deg, #1a1a2e, #16213e)', filled: false }],
+		[FileUser,       { gradient: 'linear-gradient(135deg, #F97316, #EF4444)', filled: false }]
 	]);
 
 	const fallbackConfig = { gradient: 'linear-gradient(135deg, #6B7280, #4B5563)', filled: false };
@@ -206,6 +211,7 @@
 						if (item.id === 6) windowsState.systemOpen = true;
 						if (item.id === 7) windowsState.mailOpen = true;
 						if (item.id === 8) windowsState.terminalOpen = true;
+						if (item.id === 9) windowsState.resumeOpen = true;
 					}}
 				>
 					<!-- App tile -->
@@ -237,10 +243,10 @@
 	<ContextMenuContent class="w-52">
 		<ContextMenuLabel class="text-xs opacity-60">Desktop</ContextMenuLabel>
 		<ContextMenuSeparator />
-		<ContextMenuItem disabled>New Sticky Note</ContextMenuItem>
-		<ContextMenuItem disabled>Change Wallpaper</ContextMenuItem>
+		<ContextMenuItem>New Sticky Note</ContextMenuItem>
+		<ContextMenuItem>Change Wallpaper</ContextMenuItem>
 		<ContextMenuSeparator />
-		<ContextMenuItem disabled>About This Portfolio</ContextMenuItem>
-		<ContextMenuItem disabled>View Source</ContextMenuItem>
+		<ContextMenuItem>About This Portfolio</ContextMenuItem>
+		<ContextMenuItem>View Source</ContextMenuItem>
 	</ContextMenuContent>
 </ContextMenu>
