@@ -6,6 +6,7 @@
 	import NavMenu from '$lib/components/NavMenu.svelte';
 	import BootScreen from '$lib/components/BootScreen.svelte';
 	import { bootState } from '$lib/stores/boot.svelte';
+	import CursorOverlay from '$lib/components/CursorOverlay.svelte';
 
 	let { children } = $props();
 </script>
@@ -13,6 +14,7 @@
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
 
 <BootScreen />
+<CursorOverlay />
 
 <div
 	class="flex h-screen flex-col overflow-hidden bg-cover bg-center bg-no-repeat"
