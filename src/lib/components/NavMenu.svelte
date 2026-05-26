@@ -33,7 +33,7 @@
 </script>
 
 <Tooltip.Provider>
-	<div class="flex justify-center pb-3">
+	<div class="fixed bottom-0 left-0 right-0 z-40 flex justify-center pb-3">
 		<div
 			class="flex items-end gap-1 rounded-[22px] border border-white/12 bg-black/40 px-3 py-2 shadow-[0_8px_32px_rgba(0,0,0,0.4)] backdrop-blur-[20px]"
 			onmouseleave={() => {

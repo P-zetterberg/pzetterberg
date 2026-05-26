@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { io } from 'socket.io-client';
 	import { MousePointer2 } from '@lucide/svelte';
+	import { foundCount, TOTAL_EGGS } from '$lib/stores/easterEggs.svelte';
 
 	type RemoteCursor = { x: number; y: number; color: string; name: string };
 	let cursors = $state<Record<string, RemoteCursor>>({});
@@ -79,6 +80,10 @@
 				<span class="relative inline-flex h-1.5 w-1.5 rounded-full bg-green-400"></span>
 			</span>
 			{onlineCount} online
+		</span>
+		<span class="h-3 w-px bg-white/20"></span>
+		<span class="text-xs text-white/70">
+			🥚 <span class={foundCount() > 0 ? 'font-medium text-white' : ''}>{foundCount()}</span>/{TOTAL_EGGS} eggs
 		</span>
 	</div>
 {/if}
