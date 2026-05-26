@@ -1,11 +1,12 @@
 <script lang="ts">
 	import type { Component } from 'svelte';
-	import { Folder, FileText, Image, Music } from '@lucide/svelte';
+	import { Folder, FileText, Image, Music, Monitor, Mail } from '@lucide/svelte';
 	import Window from '$lib/components/Window.svelte';
 	import MusicPlayer from '$lib/components/MusicPlayer.svelte';
 	import SystemInfo from '$lib/components/SystemInfo.svelte';
 	import ProjectsBrowser from '$lib/components/ProjectsBrowser.svelte';
 	import Notes from '$lib/components/Notes.svelte';
+	import MailApp from '$lib/components/Mail.svelte';
 	import { windowsState } from '$lib/stores/windows.svelte';
 	import { Confetti } from 'svelte-confetti';
 
@@ -16,7 +17,8 @@
 		{ key: 'musicOpen',    title: 'Music',    x: 120, y: 60,  width: 320, height: 420, component: MusicPlayer },
 		{ key: 'systemOpen',   title: 'System',   x: 200, y: 80,  width: 420, height: 480, component: SystemInfo },
 		{ key: 'projectsOpen', title: 'Projects', x: 160, y: 60,  width: 560, height: 520, component: ProjectsBrowser },
-		{ key: 'notesOpen',    title: 'Notes.txt', x: 240, y: 100, width: 360, height: 320, component: Notes }
+		{ key: 'notesOpen',    title: 'Notes.txt', x: 240, y: 100, width: 360, height: 320, component: Notes },
+		{ key: 'mailOpen',     title: 'Mail',      x: 180, y: 90,  width: 420, height: 460, component: MailApp }
 	];
 
 	const KONAMI = [
@@ -59,7 +61,9 @@
 			{ label: 'Projects',  icon: Folder },
 			{ label: 'Notes.txt', icon: FileText },
 			{ label: 'Photo.png', icon: Image },
-			{ label: 'Music',     icon: Music }
+			{ label: 'Music',     icon: Music },
+			{ label: 'System',    icon: Monitor },
+			{ label: 'Mail',      icon: Mail }
 		].map((item, i) => ({ ...item, id: i + 1, x: 40, y: ICON_START_Y + i * ICON_SPACING_Y }))
 	);
 
@@ -71,7 +75,9 @@
 		[Folder, { gradient: 'linear-gradient(135deg, #3B82F6, #1D4ED8)', filled: true }],
 		[FileText, { gradient: 'linear-gradient(135deg, #F59E0B, #D97706)', filled: false }],
 		[Image, { gradient: 'linear-gradient(135deg, #A855F7, #7C3AED)', filled: false }],
-		[Music, { gradient: 'linear-gradient(135deg, #EC4899, #BE185D)', filled: false }]
+		[Music, { gradient: 'linear-gradient(135deg, #EC4899, #BE185D)', filled: false }],
+		[Monitor, { gradient: 'linear-gradient(135deg, #10B981, #059669)', filled: false }],
+		[Mail,    { gradient: 'linear-gradient(135deg, #6366F1, #4F46E5)', filled: false }]
 	]);
 
 	const fallbackConfig = { gradient: 'linear-gradient(135deg, #6B7280, #4B5563)', filled: false };
@@ -165,6 +171,8 @@
 				if (item.id === 5) windowsState.musicOpen = true;
 				if (item.id === 2) windowsState.projectsOpen = true;
 				if (item.id === 3) windowsState.notesOpen = true;
+				if (item.id === 6) windowsState.systemOpen = true;
+				if (item.id === 7) windowsState.mailOpen = true;
 			}}
 		>
 			<!-- App tile -->
