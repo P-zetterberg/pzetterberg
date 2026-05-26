@@ -53,6 +53,7 @@
 		"socket.io-client": "^4.8.3",
 		"svelte-confetti": "^2.3.2",
 		"svelte-dnd-action": "^0.9.69",
+		"tsx": "^4.22.3",
 		"unique-names-generator": "^4.7.1"
 	}
 }
