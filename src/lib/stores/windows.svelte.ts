@@ -1,3 +1,6 @@
 export const windowsState = $state({
-	systemOpen: false
+	musicOpen: false,
+	systemOpen: false,
+	projectsOpen: false,
+	notesOpen: false
 });

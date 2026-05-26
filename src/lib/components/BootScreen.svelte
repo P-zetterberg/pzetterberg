@@ -14,6 +14,13 @@
 	let mounted = $state(true);
 
 	onMount(() => {
+		// Skip animation if already booted in this session
+		if (sessionStorage.getItem('booted')) {
+			bootState.complete = true;
+			mounted = false;
+			return;
+		}
+
 		// Stage 0 → 1: show logo after brief black pause
 		const t1 = setTimeout(() => (stage = 1), 300);
 
@@ -28,6 +35,7 @@
 
 		// Stage 4 → 5: mark complete and remove from DOM
 		const t5 = setTimeout(() => {
+			sessionStorage.setItem('booted', '1');
 			bootState.complete = true;
 			mounted = false;
 		}, 3950);

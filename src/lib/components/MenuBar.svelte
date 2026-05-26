@@ -41,6 +41,7 @@
 	}
 
 	function handleRestart() {
+		sessionStorage.removeItem('booted');
 		location.reload();
 	}
 </script>

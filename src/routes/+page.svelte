@@ -1,23 +1,67 @@
 <script lang="ts">
+	import type { Component } from 'svelte';
 	import { Folder, FileText, Image, Music } from '@lucide/svelte';
 	import Window from '$lib/components/Window.svelte';
 	import MusicPlayer from '$lib/components/MusicPlayer.svelte';
 	import SystemInfo from '$lib/components/SystemInfo.svelte';
+	import ProjectsBrowser from '$lib/components/ProjectsBrowser.svelte';
+	import Notes from '$lib/components/Notes.svelte';
 	import { windowsState } from '$lib/stores/windows.svelte';
+	import { Confetti } from 'svelte-confetti';
 
-	let windowOpen = $state(true);
-	let musicOpen = $state(false);
+	type WindowKey = keyof typeof windowsState;
+	type WindowConfig = { key: WindowKey; title: string; x: number; y: number; width: number; height: number; component: Component };
+
+	const windows: WindowConfig[] = [
+		{ key: 'musicOpen',    title: 'Music',    x: 120, y: 60,  width: 320, height: 420, component: MusicPlayer },
+		{ key: 'systemOpen',   title: 'System',   x: 200, y: 80,  width: 420, height: 480, component: SystemInfo },
+		{ key: 'projectsOpen', title: 'Projects', x: 160, y: 60,  width: 560, height: 520, component: ProjectsBrowser },
+		{ key: 'notesOpen',    title: 'Notes.txt', x: 240, y: 100, width: 360, height: 320, component: Notes }
+	];
+
+	const KONAMI = [
+		'ArrowUp',
+		'ArrowUp',
+		'ArrowDown',
+		'ArrowDown',
+		'ArrowLeft',
+		'ArrowRight',
+		'ArrowLeft',
+		'ArrowRight',
+		'b',
+		'a'
+	];
+	let konamiProgress = 0;
+	let showConfetti = $state(false);
+
+	function onkeydown(e: KeyboardEvent) {
+		if (e.key === KONAMI[konamiProgress]) {
+			konamiProgress++;
+			if (konamiProgress === KONAMI.length) {
+				konamiProgress = 0;
+				showConfetti = true;
+				setTimeout(() => (showConfetti = false), 4000);
+			}
+		} else {
+			konamiProgress = e.key === KONAMI[0] ? 1 : 0;
+		}
+	}
 
 	type IconType = typeof Folder;
 	type Item = { id: number; label: string; icon: IconType; x: number; y: number };
 
-	let items = $state<Item[]>([
-		{ id: 1, label: 'Documents', icon: Folder, x: 40, y: 40 },
-		{ id: 2, label: 'Projects', icon: Folder, x: 140, y: 40 },
-		{ id: 3, label: 'Notes.txt', icon: FileText, x: 40, y: 160 },
-		{ id: 4, label: 'Photo.png', icon: Image, x: 140, y: 160 },
-		{ id: 5, label: 'Music', icon: Music, x: 240, y: 40 }
-	]);
+	const ICON_START_Y = 40;
+	const ICON_SPACING_Y = 120;
+
+	let items = $state<Item[]>(
+		[
+			{ label: 'Documents', icon: Folder },
+			{ label: 'Projects',  icon: Folder },
+			{ label: 'Notes.txt', icon: FileText },
+			{ label: 'Photo.png', icon: Image },
+			{ label: 'Music',     icon: Music }
+		].map((item, i) => ({ ...item, id: i + 1, x: 40, y: ICON_START_Y + i * ICON_SPACING_Y }))
+	);
 
 	let dragging: { id: number; offsetX: number; offsetY: number } | null = $state(null);
 	let selected: number | null = $state(null);
@@ -62,6 +106,23 @@
 	<title>P Zetterberg</title>
 </svelte:head>
 
+<svelte:window {onkeydown} />
+
+{#if showConfetti}
+	<div
+		style="position: fixed; top: -50px; left: 0; height: 100vh; width: 100vw; display: flex; justify-content: center; overflow: hidden; pointer-events: none;"
+	>
+		<Confetti
+			x={[-5, 5]}
+			y={[0, 0.1]}
+			delay={[500, 2000]}
+			duration={5000}
+			amount={500}
+			fallDistance="100vh"
+		/>
+	</div>
+{/if}
+
 <div
 	bind:this={container}
 	role="application"
@@ -71,28 +132,14 @@
 	{onpointerup}
 	onpointerdown={oncanvasdown}
 >
-	{#if windowOpen}
-		<Window title="Example Window" x={300} y={80} width={420} height={300} onclose={() => (windowOpen = false)}>
-			<p class="text-sm text-white/70 leading-relaxed">
-				This is a reusable window component. It's draggable, resizable, closeable, and this content area scrolls.
-			</p>
-			<p class="mt-3 text-sm text-white/50 leading-relaxed">
-				Drag the title bar to move it. Grab any edge or corner to resize. Click the red dot to close.
-			</p>
-		</Window>
-	{/if}
-
-	{#if musicOpen}
-		<Window title="Music" x={120} y={60} width={320} height={420} onclose={() => (musicOpen = false)}>
-			<MusicPlayer />
-		</Window>
-	{/if}
-
-	{#if windowsState.systemOpen}
-		<Window title="System" x={200} y={80} width={420} height={480} onclose={() => (windowsState.systemOpen = false)}>
-			<SystemInfo />
-		</Window>
-	{/if}
+	{#each windows as w (w.key)}
+		{#if windowsState[w.key]}
+			{@const Comp = w.component}
+			<Window title={w.title} x={w.x} y={w.y} width={w.width} height={w.height} onclose={() => (windowsState[w.key] = false)}>
+				<Comp />
+			</Window>
+		{/if}
+	{/each}
 
 	{#each items as item (item.id)}
 		{@const Icon = item.icon}
@@ -114,7 +161,11 @@
 					: 'none'};
 				z-index: {isDragging ? 10 : 1};"
 			onpointerdown={(e) => onpointerdown(e, item)}
-			ondblclick={() => { if (item.id === 5) musicOpen = true; }}
+			ondblclick={() => {
+				if (item.id === 5) windowsState.musicOpen = true;
+				if (item.id === 2) windowsState.projectsOpen = true;
+				if (item.id === 3) windowsState.notesOpen = true;
+			}}
 		>
 			<!-- App tile -->
 			<div
