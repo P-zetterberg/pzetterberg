@@ -1,13 +1,14 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { io } from 'socket.io-client';
-	import { MousePointer2 } from '@lucide/svelte';
+	import { MousePointer2, Eye, EyeOff } from '@lucide/svelte';
 	import { foundCount, TOTAL_EGGS } from '$lib/stores/easterEggs.svelte';
 
 	type RemoteCursor = { x: number; y: number; color: string; name: string };
 	let cursors = $state<Record<string, RemoteCursor>>({});
 	let myName = $state('');
 	let myColor = $state('');
+	let showCursors = $state(true);
 
 	onMount(() => {
 		const socket = io();
@@ -45,6 +46,7 @@
 	});
 </script>
 
+{#if showCursors}
 {#each Object.entries(cursors) as [, cursor]}
 	<div
 		class="pointer-events-none fixed z-9999 transition-[left,top] duration-75 ease-linear"
@@ -63,6 +65,7 @@
 		</span>
 	</div>
 {/each}
+{/if}
 
 {#if myName}
 	{@const onlineCount = Object.keys(cursors).length + 1}
@@ -85,5 +88,13 @@
 		<span class="text-xs text-white/70">
 			🥚 <span class={foundCount() > 0 ? 'font-medium text-white' : ''}>{foundCount()}</span>/{TOTAL_EGGS} eggs
 		</span>
+		<span class="h-3 w-px bg-white/20"></span>
+		<button
+			class="text-xs transition-colors {showCursors ? 'text-white' : 'text-white/40'}"
+			onclick={() => (showCursors = !showCursors)}
+			title={showCursors ? 'Hide cursors' : 'Show cursors'}
+		>
+			{#if showCursors}<Eye class="h-3.5 w-3.5" />{:else}<EyeOff class="h-3.5 w-3.5" />{/if}
+		</button>
 	</div>
 {/if}

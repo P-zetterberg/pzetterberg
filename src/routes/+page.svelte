@@ -98,6 +98,11 @@
 
 	items.push({ id: 9, label: 'Resume.pdf', icon: FileUser, x: 160, y: 40 });
 
+	items.find(i => i.label === 'Mail')!.x = 160;
+	items.find(i => i.label === 'Mail')!.y = 160;
+	items.find(i => i.label === 'Terminal')!.x = 160;
+	items.find(i => i.label === 'Terminal')!.y = 280;
+
 	let dragging: { id: number; offsetX: number; offsetY: number } | null = $state(null);
 	let selected: number | null = $state(null);
 	let container: HTMLDivElement;
