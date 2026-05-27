@@ -172,7 +172,7 @@
 		position: absolute;
 		display: flex;
 		flex-direction: column;
-		background: rgba(18, 18, 18, 0.72);
+		background: rgba(18, 18, 18, 0.92);
 		backdrop-filter: blur(20px);
 		-webkit-backdrop-filter: blur(20px);
 		border: 1px solid rgba(255, 255, 255, 0.12);
