@@ -10,6 +10,8 @@
 	import Terminal from '$lib/components/Terminal.svelte';
 	import Resume from '$lib/components/Resume.svelte';
 	import MatrixRain from '$lib/components/MatrixRain.svelte';
+	import StickyNote from '$lib/components/StickyNote.svelte';
+	import { PersistedState } from 'runed';
 	import { windowsState } from '$lib/stores/windows.svelte';
 	import { easterEggState } from '$lib/stores/easterEggs.svelte';
 	import { Confetti } from 'svelte-confetti';
@@ -103,6 +105,22 @@
 	items.find(i => i.label === 'Terminal')!.x = 160;
 	items.find(i => i.label === 'Terminal')!.y = 280;
 
+	type StickyNoteData = { id: number; x: number; y: number; color: string; content: string };
+	const stickyNotes = new PersistedState<StickyNoteData[]>('sticky-notes', []);
+	let nextNoteId = $derived(
+		stickyNotes.current.length > 0 ? Math.max(...stickyNotes.current.map((n) => n.id)) + 1 : 1
+	);
+
+	function addStickyNote() {
+		const offset = stickyNotes.current.length * 30;
+		const x = window.innerWidth - 220 - 24 - offset;
+		const y = 60 + offset;
+		stickyNotes.current = [
+			...stickyNotes.current,
+			{ id: nextNoteId, x, y, color: 'yellow', content: '' }
+		];
+	}
+
 	let dragging: { id: number; offsetX: number; offsetY: number } | null = $state(null);
 	let selected: number | null = $state(null);
 	let container: HTMLDivElement;
@@ -189,6 +207,16 @@
 				{/if}
 			{/each}
 
+			{#each stickyNotes.current as note (note.id)}
+				<StickyNote
+					bind:x={note.x}
+					bind:y={note.y}
+					bind:color={note.color}
+					bind:content={note.content}
+					onclose={() => (stickyNotes.current = stickyNotes.current.filter((n) => n.id !== note.id))}
+				/>
+			{/each}
+
 			{#each items as item (item.id)}
 				{@const Icon = item.icon}
 				{@const config = iconConfigMap.get(item.icon) ?? fallbackConfig}
@@ -248,7 +276,7 @@
 	<ContextMenuContent class="w-52">
 		<ContextMenuLabel class="text-xs opacity-60">Desktop</ContextMenuLabel>
 		<ContextMenuSeparator />
-		<ContextMenuItem>New Sticky Note</ContextMenuItem>
+		<ContextMenuItem onclick={addStickyNote}>New Sticky Note</ContextMenuItem>
 		<ContextMenuItem>Change Wallpaper</ContextMenuItem>
 		<ContextMenuSeparator />
 		<ContextMenuItem>About This Portfolio</ContextMenuItem>

@@ -1,20 +1,16 @@
 <script lang="ts">
-	import { House, Folder, Mail } from '@lucide/svelte';
+	import { NotebookPen } from '@lucide/svelte';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
+	import { page } from '$app/stores';
+
+	const isGuestbook = $derived($page.url.pathname === '/guestbook');
 
 	const navItems = [
-		{ name: 'Home', href: '/', icon: House, gradient: 'linear-gradient(135deg, #3B82F6, #1D4ED8)' },
 		{
-			name: 'Projects',
-			href: '/projects',
-			icon: Folder,
-			gradient: 'linear-gradient(135deg, #F59E0B, #D97706)'
-		},
-		{
-			name: 'Contact',
-			href: '/contact',
-			icon: Mail,
-			gradient: 'linear-gradient(135deg, #EC4899, #BE185D)'
+			name: 'Guestbook',
+			href: '/guestbook',
+			icon: NotebookPen,
+			gradient: 'linear-gradient(135deg, #2dd4bf, #0d9488)'
 		}
 	];
 
@@ -56,21 +52,22 @@
 						}}
 						onmouseleave={() => (hoveredLogo = false)}
 					>
-						<div
+						<a
+							href="/"
 							class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl text-sm font-extrabold tracking-tight text-white/90 transition-colors hover:bg-white/10"
 						>
 							PZ
-						</div>
+						</a>
 					</div>
 				</Tooltip.Trigger>
-				<Tooltip.Content sideOffset={8}>PZ</Tooltip.Content>
+				<Tooltip.Content sideOffset={8}>Home</Tooltip.Content>
 			</Tooltip.Root>
 
 			<!-- Separator -->
 			<div class="mx-1 h-8 w-px self-center bg-white/15"></div>
 
 			<!-- Nav items -->
-			{#each navItems as item, i}
+			{#each navItems.filter(item => !isGuestbook || item.href === '/guestbook') as item, i}
 				{@const Icon = item.icon}
 				<Tooltip.Root>
 					<Tooltip.Trigger>
